@@ -1,11 +1,13 @@
 package com.sis.scrum.retro;
 
 public enum Feedbacktype {
-    POSITIVE,
-    NEGATIVE,
-    IDEA,
-    PRAISE
+    POSITIVE("positive"),
+    NEGATIVE("negative"),
+    IDEA("idea"),
+    PRAISE("praise")
     ;
 
 
+    Feedbacktype(String type) {
+    }
 }

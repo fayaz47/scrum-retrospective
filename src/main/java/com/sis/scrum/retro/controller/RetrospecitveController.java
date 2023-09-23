@@ -14,21 +14,21 @@ import java.util.UUID;
 public class RetrospecitveController {
    @Autowired
     RetroRepository retroRepository;
-    @GetMapping(value = "/retros}", produces = {"application/json"})
-    public ResponseEntity<Object> fetchRetro() throws  Exception{
+    @GetMapping("/retros")
+    public ResponseEntity fetchRetro() throws  Exception{
 
-        List<Retrospective> consent =  retroRepository.getRetros();
-        if(consent != null) {
-            return new ResponseEntity<>(consent, HttpStatus.OK);
+        List<Retrospective> retrospectives =  retroRepository.findAll();
+        if(retrospectives != null) {
+            return new ResponseEntity<>(retrospectives, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(consent, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(retrospectives, HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/retro")
     public ResponseEntity<Retrospective> createRetro(@RequestBody Retrospective retrospective) {
         try {
-            Retrospective retrospective1 = retroRepository.saveRetro(retrospective);
+            Retrospective retrospective1 = retroRepository.save(retrospective);
             return new ResponseEntity<>(retrospective1, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -37,9 +37,9 @@ public class RetrospecitveController {
     @PutMapping("/retro")
     public ResponseEntity<Retrospective> updateRetro(@RequestParam UUID retroId,@RequestBody Retrospective retrospective) {
         try {
-           Retrospective retrospective1 = retroRepository.getRetros().stream().filter(i -> i.equals(retroId)).findFirst().orElse(null);
+           Retrospective retrospective1 = retroRepository.getReferenceById(retroId);
             if(retrospective1 != null)
-            retroRepository.saveRetro(retrospective);
+            retroRepository.save(retrospective);
             return new ResponseEntity<>( HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
