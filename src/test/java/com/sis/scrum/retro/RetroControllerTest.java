@@ -55,11 +55,12 @@ public class RetroControllerTest {
         List<Retrospective> retrospectiveList = new ArrayList<>();
         retrospectiveList.add(retrospective);
         Mockito.when(retroRepository.findAll()).thenReturn(retrospectiveList);
-        ResponseEntity actualValue = retrospecitveController.fetchRetro();
+        ResponseEntity actualValue = retrospecitveController.fetchRetro(0,2);
 
         Assertions.assertEquals(HttpStatus.OK, actualValue.getStatusCode());
 
     }
+
 
     @Test
     @DisplayName("create Retro")

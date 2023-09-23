@@ -4,29 +4,35 @@ import com.sis.scrum.retro.Feedback;
 import com.sis.scrum.retro.FeedbackType;
 import com.sis.scrum.retro.Item;
 import com.sis.scrum.retro.Retrospective;
+import com.sis.scrum.retro.repository.RetroPageRepository;
 import com.sis.scrum.retro.repository.RetroRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 public class RetrospecitveController {
    @Autowired
     RetroRepository retroRepository;
+    @Autowired
+    RetroPageRepository retroPageRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(RetrospecitveController.class);
 
     @GetMapping("/retros")
-    public ResponseEntity fetchRetro() throws  Exception{
+    public ResponseEntity fetchRetro( @RequestParam(defaultValue = "0") Integer pageNo,
+                                      @RequestParam(defaultValue = "10") Integer pageSize) throws  Exception{
 
-        List<Retrospective> retrospectives =  retroRepository.findAll();
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        Page<Retrospective> retrospectives =  retroPageRepository.findAll(paging);
         if(retrospectives != null) {
             LOGGER.info("List of Retros {}",retrospectives);
             return new ResponseEntity<>(retrospectives, HttpStatus.OK);
@@ -35,6 +41,19 @@ public class RetrospecitveController {
         }
     }
 
+    @GetMapping("/retro")
+    public ResponseEntity fetchRetroBydate( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date date
+                                      ) throws  Exception{
+
+
+        List<Retrospective> retrospectives =  retroRepository.findAllByDate(date);
+        if(retrospectives != null) {
+            LOGGER.info("List of Retros {}",retrospectives);
+            return new ResponseEntity<>(retrospectives, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(retrospectives, HttpStatus.NOT_FOUND);
+        }
+    }
     @PostMapping("/retro")
     public ResponseEntity<Retrospective> createRetro(@RequestBody Retrospective retrospective) {
         try {

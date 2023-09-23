@@ -1,6 +1,7 @@
 package com.sis.scrum.retro;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class Retrospective {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private    UUID name;
     private   String summary;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private   Date date;
     private   Set<String> participants;
     @OneToMany(targetEntity=Feedback.class, mappedBy="retrospective",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
